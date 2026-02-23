@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 구조 분석 - stock_front</title>
+    <style>
+        @page {
+            margin: 2cm;
+        }
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        h2 {
+            color: #1e40af;
+            margin-top: 25px;
+            border-left: 4px solid #3b82f6;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #1e3a8a;
+            margin-top: 20px;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #dc2626;
+        }
+        pre {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: #333;
+        }
+        .directory-tree {
+            background: #f9fafb;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 2px;
+        }
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-purple {
+            background: #e9d5ff;
+            color: #6b21a8;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .metadata {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        ul {
+            padding-left: 25px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        @media print {
+            body {
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="section">
+        <h2>1. 프로젝트 개요</h2>
+        <p>
+            한국투자증권 OpenAPI를 기반으로 한 주식 데이터 시각화 웹 애플리케이션입니다.
+            <br>
+            외국인과 기관이 동반 매수한 종목을 분석하여 차트와 리스트 형태로 제공합니다.
+        </p>
+        <ul>
+            <li><strong>목적:</strong> 외국인 · 기관 동반 매수 종목 분석 및 시각화</li>
+            <li><strong>데이터 소스:</strong> 한국투자증권 OpenAPI</li>
+            <li><strong>백엔드 API:</strong> http://localhost:3001/market/refined</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>2. 디렉토리 구조</h2>
+        <div class="directory-tree">stock_front/
+├── app/                          # Next.js App Router 디렉토리
+│   ├── layout.tsx                # 루트 레이아웃 (폰트, 메타데이터 설정)
+│   ├── page.tsx                  # 루트 페이지 (스플래시 화면 → /home 리다이렉트)
+│   ├── home/
+│   │   └── page.tsx              # 메인 페이지 (주식 데이터 차트 및 리스트)
+│   ├── globals.css               # 전역 스타일 (Tailwind, 커스텀 애니메이션)
+│   └── favicon.ico               # (삭제됨)
+│
+├── components/                    # 재사용 가능한 컴포넌트
+│   └── splash/
+│       └── Splash.tsx            # 스플래시 스크린 컴포넌트
+│
+├── public/                        # 정적 파일
+│   └── *.svg                     # SVG 아이콘들
+│
+├── package.json                  # 의존성 및 스크립트
+├── tsconfig.json                 # TypeScript 설정
+├── next.config.ts                # Next.js 설정
+└── README.md                     # 프로젝트 문서</div>
+    </div>
+
+    <div class="section">
+        <h2>3. 주요 파일 상세</h2>
+        
+        <h3>3.1 app/page.tsx</h3>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>내용</th>
+            </tr>
+            <tr>
+                <td><strong>역할</strong></td>
+                <td>진입점 (스플래시 화면 → 리다이렉트)</td>
+            </tr>
+            <tr>
+                <td><strong>주요 기능</strong></td>
+                <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        <li>2초 후 /home으로 자동 리다이렉트</li>
+                        <li>SplashScreen 컴포넌트 표시</li>
+                        <li>NProgress CSS import</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+        <h3>3.2 app/home/page.tsx</h3>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>내용</th>
+            </tr>
+            <tr>
+                <td><strong>역할</strong></td>
+                <td>메인 데이터 페이지</td>
+            </tr>
+            <tr>
+                <td><strong>주요 기능</strong></td>
+                <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        <li>백엔드 API 호출 (http://localhost:3001/market/refined)</li>
+                        <li>로딩 스켈레톤 UI 제공</li>
+                        <li>Recharts를 이용한 바 차트 표시</li>
+                        <li>종목 리스트를 카드 형태로 표시</li>
+                        <li>외국인/기관/기금 매수 데이터 집계 및 표시</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><strong>사용 라이브러리</strong></td>
+                <td>Recharts, NProgress</td>
+            </tr>
+        </table>
+
+        <h3>3.3 components/splash/Splash.tsx</h3>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>내용</th>
+            </tr>
+            <tr>
+                <td><strong>역할</strong></td>
+                <td>스플래시 화면 컴포넌트</td>
+            </tr>
+            <tr>
+                <td><strong>주요 기능</strong></td>
+                <td>
+                    <ul style="margin: 0; padding-left: 20px;">
+                        <li>페이드인 애니메이션 효과</li>
+                        <li>막대 애니메이션 </li>
+                        <li>로딩 메시지 표시</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>4. 기술 스택</h2>
+        
+        <h3>4.1 핵심 라이브러리</h3>
+        <table>
+            <tr>
+                <th>라이브러리</th>
+                <th>버전</th>
+                <th>용도</th>
+            </tr>
+            <tr>
+                <td><code>next</code></td>
+                <td>16.1.6</td>
+                <td>React 프레임워크</td>
+            </tr>
+            <tr>
+                <td><code>react</code></td>
+                <td>19.2.3</td>
+                <td>UI 라이브러리</td>
+            </tr>
+            <tr>
+                <td><code>react-dom</code></td>
+                <td>19.2.3</td>
+                <td>React DOM 렌더링</td>
+            </tr>
+            <tr>
+                <td><code>recharts</code></td>
+                <td>3.7.0</td>
+                <td>차트 라이브러리</td>
+            </tr>
+            <tr>
+                <td><code>nprogress</code></td>
+                <td>0.2.0</td>
+                <td>로딩 바 표시</td>
+            </tr>
+            <tr>
+                <td><code>motion</code></td>
+                <td>12.34.2</td>
+                <td>애니메이션 라이브러리</td>
+            </tr>
+        </table>
+
+        <h3>4.2 개발 도구</h3>
+        <table>
+            <tr>
+                <th>도구</th>
+                <th>버전</th>
+                <th>용도</th>
+            </tr>
+            <tr>
+                <td><code>typescript</code></td>
+                <td>5</td>
+                <td>타입 안정성</td>
+            </tr>
+            <tr>
+                <td><code>tailwindcss</code></td>
+                <td>4</td>
+                <td>CSS 프레임워크</td>
+            </tr>
+            <tr>
+                <td><code>eslint</code></td>
+                <td>9</td>
+                <td>코드 린팅</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>5. 데이터 흐름</h2>
+        <div class="directory-tree">사용자 접속
+    ↓
+app/page.tsx (스플래시 2초)
+    ↓
+app/home/page.tsx
+    ↓
+fetch("http://localhost:3001/market/refined")
+    ↓
+응답: { success, data: Stock[], message, timestamp }
+    ↓
+데이터 시각화 (차트 + 리스트)</div>
+    </div>
+
+    <div class="section">
+        <h2>6. 주요 타입 정의</h2>
+        
+        <h3>6.1 Stock 타입</h3>
+        <pre><code>type Stock = {
+  name: string                    // 종목명
+  code: string                    // 종목 코드
+  foreignQty: number              // 외국인 수량
+  institutionQty: number          // 기관 수량
+  foreignAmount: number           // 외국인 매수 금액
+  institutionAmount: number       // 기관 매수 금액
+  fundAmount: number              // 기금 매수 금액
+  totalAmount: number             // 총 매수 금액
+}</code></pre>
+
+        <h3>6.2 MarketRefinedResponse 타입</h3>
+        <pre><code>type MarketRefinedResponse = {
+  success: boolean                // 성공 여부
+  data: Stock[]                   // 주식 데이터 배열
+  message: string                 // 응답 메시지
+  timestamp: string               // 타임스탬프 (ISO 형식)
+}</code></pre>
+    </div>
+
+
+    <div class="section">
+        <h2>7. 주요 특징</h2>
+        <ul>
+            <li><span class="badge badge-blue">App Router</span> Next.js 13+ App Router 사용</li>
+            <li><span class="badge badge-green">Client Component</span> 클라이언트 컴포넌트 중심 ("use client")</li>
+            <li><span class="badge badge-purple">Loading State</span> 로딩 상태 관리 (NProgress, Skeleton UI)</li>
+            <li><span class="badge badge-blue">Responsive Chart</span> 반응형 차트 (Recharts)</li>
+            <li><span class="badge badge-green">API Integration</span> 한국투자증권 OpenAPI 연동</li>
+            <li><span class="badge badge-purple">Type Safety</span> TypeScript로 타입 안정성 확보</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>8. API 엔드포인트</h2>
+        <table>
+            <tr>
+                <th>엔드포인트</th>
+                <th>메서드</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td><code>http://localhost:3001/market/refined</code></td>
+                <td>GET</td>
+                <td>정제된 시장 데이터 조회 (외국인·기관 동반 매수 종목)</td>
+            </tr>
+        </table>
+        
+        <h3>응답 형식</h3>
+        <pre><code>{
+  "success": true,
+  "data": [
+    {
+      "name": "삼양식품",
+      "code": "003230",
+      "foreignQty": 32000,
+      "institutionQty": 2000,
+      "foreignAmount": 40000,
+      "institutionAmount": 5000,
+      "fundAmount": 0,
+      "totalAmount": 45000
+    },
+    ...
+  ],
+  "message": "정제된 시장 데이터 조회 성공",
+  "timestamp": "2026-02-23T02:59:12.346Z"
+}</code></pre>
+    </div>
+
+</body>
+</html>
