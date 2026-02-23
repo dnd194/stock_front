@@ -50,7 +50,7 @@ export default function HomePage() {
     // 로딩 시작
     NProgress.start();
 
-    fetch("http://localhost:3001/market/refined")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/refined`)
       .then((res) => res.json())
       .then((res: MarketRefinedResponse) => {
         if (res.success && Array.isArray(res.data)) {
