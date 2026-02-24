@@ -16,18 +16,18 @@ export function getKSTTimeString(): string {
   return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
 }
 
-/** 08:00 ~ 09:20 KST: 첫 집계 전 → 데이터 없음 */
+/** 08:00 ~ 09:30 미만 KST: 프리마켓 → 대체 화면, API 미호출 */
 export function isBeforeFirstAggregation(): boolean {
   const total = getKSTMinutes()
   const start = 8 * 60 + 0   // 08:00
-  const end = 9 * 60 + 20   // 09:20 (첫 외국인 집계 09:30 - 10분 전까지)
+  const end = 9 * 60 + 30   // 09:30 직전까지
   return total >= start && total < end
 }
 
-/** 10시 ±10분(09:50~10:10 KST)이면 기관 데이터 없음 → true */
+/** 09:30 ~ 10:00 KST: 기관 데이터 미집계 → 배너 표시 */
 export function isInstitutionDataUnavailableWindow(): boolean {
   const totalMinutes = getKSTMinutes()
-  const start = 9 * 60 + 50  // 09:50
-  const end = 10 * 60 + 10   // 10:10
+  const start = 9 * 60 + 30  // 09:30
+  const end = 10 * 60 + 0    // 10:00
   return totalMinutes >= start && totalMinutes <= end
 }

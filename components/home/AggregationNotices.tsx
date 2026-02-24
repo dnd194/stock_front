@@ -11,7 +11,7 @@ export default function AggregationNotices({
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           <span className="font-medium">⏱ 집계 시간 안내</span>
           <p className="mt-1">
-            현재 시각(10시 전후)은 기관 데이터 집계 시간이 아니라{" "}
+            현재 시각(09:30~10:00)은 기관 데이터가 아직 집계되지 않아{" "}
             <strong>외국인 데이터만</strong> 반영됩니다.
           </p>
         </div>

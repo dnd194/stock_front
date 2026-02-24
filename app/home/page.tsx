@@ -74,7 +74,7 @@ export default function HomePage() {
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">
         오늘의 쌍끌이 종목 Top 10
       </h1>
-      <p className="text-sm text-gray-500 mb-2">
+      <p className="text-xs sm:text-sm text-gray-500 mb-2 whitespace-nowrap overflow-x-auto">
         ** 본 데이터는 한국투자증권 OpenAPI를 기반으로 제공됩니다. **
       </p>
 
@@ -99,7 +99,7 @@ export default function HomePage() {
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-xs sm:text-sm text-gray-500 whitespace-nowrap overflow-x-auto">
           ** 본 데이터는 한국투자증권 OpenAPI를 기반으로 제공됩니다. **
         </p>
       </div>
