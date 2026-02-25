@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import NProgress from "nprogress"
 import type { Stock, MarketRefinedResponse } from "@/lib/market"
 import {
@@ -14,14 +14,29 @@ import SummaryCards from "@/components/home/SummaryCards"
 import AggregationNotices from "@/components/home/AggregationNotices"
 import TwinPullChart from "@/components/home/TwinPullChart"
 import StockCard from "@/components/home/StockCard"
+import GeminiSummaryModal from "@/components/home/GeminiSummaryModal"
+
+const GEMINI_RETRY_DELAY_MS = 4000
+const GEMINI_RETRY_MAX = 6
+
+function fetchRefined(): Promise<MarketRefinedResponse> {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/refined`).then(
+    (res) => res.json()
+  )
+}
 
 export default function HomePage() {
   const [data, setData] = useState<Stock[]>([])
+  const [geminiText, setGeminiText] = useState("")
+  const [geminiPending, setGeminiPending] = useState(false)
+  const [geminiModalOpen, setGeminiModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showInstitutionUnavailableBanner, setShowInstitutionUnavailableBanner] =
     useState(false)
   const [isPreMarket, setIsPreMarket] = useState<boolean | null>(null)
   const isMobile = useIsMobile()
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const retryCountRef = useRef(0)
 
   useEffect(() => {
     setShowInstitutionUnavailableBanner(isInstitutionDataUnavailableWindow())
@@ -36,11 +51,16 @@ export default function HomePage() {
     }
     if (isPreMarket === false) {
       NProgress.start()
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/refined`)
-        .then((res) => res.json())
-        .then((res: MarketRefinedResponse) => {
-          if (res.success && Array.isArray(res.data)) {
-            setData(res.data)
+      fetchRefined()
+        .then((res) => {
+          if (res.success && Array.isArray(res.data?.refined)) {
+            setData(res.data.refined)
+            if (res.data.gemini?.text) {
+              setGeminiText(res.data.gemini.text)
+              setGeminiPending(false)
+            } else if (res.data.geminiPending === true) {
+              setGeminiPending(true)
+            }
           }
           setTimeout(() => {
             setIsLoading(false)
@@ -56,6 +76,38 @@ export default function HomePage() {
       }
     }
   }, [isPreMarket])
+
+  // geminiPending일 때 10초마다 재호출 (최대 GEMINI_RETRY_MAX회)
+  useEffect(() => {
+    if (!geminiPending || geminiText) return
+
+    const scheduleRetry = () => {
+      retryTimeoutRef.current = setTimeout(() => {
+        retryCountRef.current += 1
+        fetchRefined().then((res) => {
+          if (res.success && res.data?.gemini?.text) {
+            setGeminiText(res.data.gemini.text)
+            setGeminiPending(false)
+            retryCountRef.current = 0
+          } else if (retryCountRef.current < GEMINI_RETRY_MAX) {
+            scheduleRetry()
+          } else {
+            setGeminiPending(false)
+            retryCountRef.current = 0
+          }
+        })
+      }, GEMINI_RETRY_DELAY_MS)
+    }
+
+    scheduleRetry()
+
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current)
+        retryTimeoutRef.current = null
+      }
+    }
+  }, [geminiPending, geminiText])
 
   if (isPreMarket === null) return <ChartSkeleton />
   if (isPreMarket) return <PreMarketScreen />
@@ -82,13 +134,30 @@ export default function HomePage() {
         showInstitutionUnavailableBanner={showInstitutionUnavailableBanner}
       />
 
+      <div className="mb-6 flex justify-center">
+        {geminiPending && !geminiText && (
+          <p className="text-sm text-gray-500">AI 요약 생성 중…</p>
+        )}
+      </div>
+
       <SummaryCards
         totalForeign={totalForeign}
         totalInstitution={totalInstitution}
         totalFund={totalFund}
       />
 
-      <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-2xl shadow-sm mb-10 sm:mb-12">
+      <div className="relative bg-white border border-gray-200 p-4 sm:p-6 rounded-2xl shadow-sm mb-10 sm:mb-12">
+        {geminiText && (
+          <div className="absolute right-4 top-4 z-10">
+            <button
+              type="button"
+              onClick={() => setGeminiModalOpen(true)}
+              className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            >
+              ✨ AI 분석
+            </button>
+          </div>
+        )}
         <TwinPullChart data={top10} isMobile={isMobile} />
       </div>
 
@@ -103,6 +172,12 @@ export default function HomePage() {
           ** 본 데이터는 한국투자증권 OpenAPI를 기반으로 제공됩니다. **
         </p>
       </div>
+
+      <GeminiSummaryModal
+        isOpen={geminiModalOpen}
+        onClose={() => setGeminiModalOpen(false)}
+        text={geminiText}
+      />
     </div>
   )
 }

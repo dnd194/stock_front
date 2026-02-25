@@ -11,7 +11,11 @@ export type Stock = {
 
 export type MarketRefinedResponse = {
   success: boolean
-  data: Stock[]
+  data: {
+    refined: Stock[]
+    gemini: { text: string } | null
+    geminiPending?: boolean
+  }
   message: string
   timestamp: string
 }
