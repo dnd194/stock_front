@@ -5,6 +5,7 @@ import "./globals.css";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+const SEO_IMAGE_PATH = "/seoImage_resize.png";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   ],
   category: "finance",
   alternates: {
-    canonical: "/home",
+    canonical: SITE_URL ? `${SITE_URL}/home` : "/home",
   },
   openGraph: {
     title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
@@ -44,12 +45,21 @@ export const metadata: Metadata = {
     siteName: "오늘의 쌍끌이",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: SEO_IMAGE_PATH,
+        width: 1024,
+        height: 576,
+        alt: "대한민국 국기를 배경으로 상승하는 코스피 주식 시장 그래프",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
     description:
       "오늘의 외국인·기관 동시 순매수 쌍끌이 종목을 확인하세요. 한국투자증권 OpenAPI 기반 AI 분석 제공.",
+    images: [SEO_IMAGE_PATH],
   },
   robots: {
     index: true,
