@@ -6,10 +6,12 @@ import type { Stock, MarketRefinedResponse } from "@/lib/market"
 import {
   isBeforeFirstAggregation,
   isInstitutionDataUnavailableWindow,
+  isWeekendClosedWindow,
 } from "@/lib/kst"
 import { useIsMobile } from "@/hooks/useIsMobile"
 import ChartSkeleton from "@/components/home/ChartSkeleton"
 import PreMarketScreen from "@/components/home/PreMarketScreen"
+import WeekendClosedScreen from "@/components/home/WeekendClosedScreen"
 import SummaryCards from "@/components/home/SummaryCards"
 import AggregationNotices from "@/components/home/AggregationNotices"
 import TwinPullChart from "@/components/home/TwinPullChart"
@@ -33,6 +35,7 @@ export default function HomePageClient() {
   const [isLoading, setIsLoading] = useState(true)
   const [showInstitutionUnavailableBanner, setShowInstitutionUnavailableBanner] =
     useState(false)
+  const [isWeekendClosed, setIsWeekendClosed] = useState<boolean | null>(null)
   const [isPreMarket, setIsPreMarket] = useState<boolean | null>(null)
   const isMobile = useIsMobile()
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -40,16 +43,23 @@ export default function HomePageClient() {
 
   useEffect(() => {
     setShowInstitutionUnavailableBanner(isInstitutionDataUnavailableWindow())
+    setIsWeekendClosed(isWeekendClosedWindow())
     setIsPreMarket(isBeforeFirstAggregation())
   }, [])
 
   useEffect(() => {
+    if (isWeekendClosed === true) {
+      setIsLoading(false)
+      NProgress.done()
+      return
+    }
+
     if (isPreMarket === true) {
       setIsLoading(false)
       NProgress.done()
       return
     }
-    if (isPreMarket === false) {
+    if (isWeekendClosed === false && isPreMarket === false) {
       NProgress.start()
       fetchRefined()
         .then((res) => {
@@ -75,7 +85,7 @@ export default function HomePageClient() {
         NProgress.done()
       }
     }
-  }, [isPreMarket])
+  }, [isPreMarket, isWeekendClosed])
 
   // geminiPending일 때 10초마다 재호출 (최대 GEMINI_RETRY_MAX회)
   useEffect(() => {
@@ -109,7 +119,8 @@ export default function HomePageClient() {
     }
   }, [geminiPending, geminiText])
 
-  if (isPreMarket === null) return <ChartSkeleton />
+  if (isWeekendClosed === null || isPreMarket === null) return <ChartSkeleton />
+  if (isWeekendClosed) return <WeekendClosedScreen />
   if (isPreMarket) return <PreMarketScreen />
   if (isLoading) return <ChartSkeleton />
 

@@ -31,3 +31,21 @@ export function isInstitutionDataUnavailableWindow(): boolean {
   const end = 10 * 60 + 0    // 10:00
   return totalMinutes >= start && totalMinutes <= end
 }
+
+/** 토요일 08:00 ~ 월요일 00:00 KST: 주말 휴장 안내 화면 */
+export function isWeekendClosedWindow(): boolean {
+  const now = new Date()
+  const kstMs = now.getTime() + 9 * 60 * 60 * 1000
+  const kstDate = new Date(kstMs)
+  const day = kstDate.getUTCDay() // 0: Sun, 1: Mon, ... 6: Sat
+  const totalMinutes = kstDate.getUTCHours() * 60 + kstDate.getUTCMinutes()
+
+  // Sat 08:00 이후
+  if (day === 6 && totalMinutes >= 8 * 60) return true
+  // Sun 종일
+  if (day === 0) return true
+  // Mon 00:00 직전까지(00:00 포함 안 함)
+  if (day === 1 && totalMinutes < 1) return true
+
+  return false
+}
