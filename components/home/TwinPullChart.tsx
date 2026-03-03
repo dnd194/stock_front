@@ -21,13 +21,22 @@ const tooltipContentStyle = {
 const formatBillion = (value: unknown) =>
   typeof value === "number" ? `${(value / 100).toFixed(1)}억` : ""
 
+export type ChartSeries = "both" | "foreign" | "institution"
+
 type TwinPullChartProps = {
   data: Stock[]
   isMobile: boolean
+  series?: ChartSeries
 }
 
-export default function TwinPullChart({ data, isMobile }: TwinPullChartProps) {
+export default function TwinPullChart({
+  data,
+  isMobile,
+  series = "both",
+}: TwinPullChartProps) {
   const height = isMobile ? 520 : 420
+  const showForeign = series === "both" || series === "foreign"
+  const showInstitution = series === "both" || series === "institution"
 
   if (isMobile) {
     return (
@@ -58,20 +67,24 @@ export default function TwinPullChart({ data, isMobile }: TwinPullChartProps) {
             labelStyle={{ fontWeight: 600 }}
           />
           <Legend />
-          <Bar
-            dataKey="institutionAmount"
-            name="기관"
-            fill="#10b981"
-            radius={[0, 6, 6, 0]}
-            animationDuration={800}
-          />
-          <Bar
-            dataKey="foreignAmount"
-            name="외국인"
-            fill="#2563eb"
-            radius={[0, 6, 6, 0]}
-            animationDuration={800}
-          />
+          {showInstitution && (
+            <Bar
+              dataKey="institutionAmount"
+              name="기관"
+              fill="#10b981"
+              radius={[0, 6, 6, 0]}
+              animationDuration={800}
+            />
+          )}
+          {showForeign && (
+            <Bar
+              dataKey="foreignAmount"
+              name="외국인"
+              fill="#2563eb"
+              radius={[0, 6, 6, 0]}
+              animationDuration={800}
+            />
+          )}
         </BarChart>
       </ResponsiveContainer>
     )
@@ -98,20 +111,24 @@ export default function TwinPullChart({ data, isMobile }: TwinPullChartProps) {
           labelStyle={{ fontWeight: 600 }}
         />
         <Legend />
-        <Bar
-          dataKey="institutionAmount"
-          name="기관"
-          fill="#10b981"
-          radius={[6, 6, 0, 0]}
-          animationDuration={800}
-        />
-        <Bar
-          dataKey="foreignAmount"
-          name="외국인"
-          fill="#2563eb"
-          radius={[6, 6, 0, 0]}
-          animationDuration={800}
-        />
+        {showInstitution && (
+          <Bar
+            dataKey="institutionAmount"
+            name="기관"
+            fill="#10b981"
+            radius={[6, 6, 0, 0]}
+            animationDuration={800}
+          />
+        )}
+        {showForeign && (
+          <Bar
+            dataKey="foreignAmount"
+            name="외국인"
+            fill="#2563eb"
+            radius={[6, 6, 0, 0]}
+            animationDuration={800}
+          />
+        )}
       </BarChart>
     </ResponsiveContainer>
   )

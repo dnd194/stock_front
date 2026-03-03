@@ -19,3 +19,12 @@ export type MarketRefinedResponse = {
   message: string
   timestamp: string
 }
+
+export type MarketListResponse = {
+  success: boolean
+  data: {
+    refined: Stock[]
+  }
+  message: string
+  timestamp: string
+}

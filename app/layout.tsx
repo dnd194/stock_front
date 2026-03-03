@@ -20,6 +20,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: [
+      { url: "/favicon_chart.ico", sizes: "32x32", type: "image/png" },
+      { url: "/favicon_chart.ico", sizes: "192x192", type: "image/png" },
+      { url: "/favicon_chart.ico", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicon_chart.ico", sizes: "180x180", type: "image/png" },
+    ],
+  },
   title: {
     default: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
     template: "%s | 오늘의 쌍끌이",

@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useRef } from "react"
 import NProgress from "nprogress"
-import type { Stock, MarketRefinedResponse } from "@/lib/market"
+import type {
+  Stock,
+  MarketRefinedResponse,
+  MarketListResponse,
+} from "@/lib/market"
 import {
   isBeforeFirstAggregation,
   isInstitutionDataUnavailableWindow,
@@ -14,20 +18,54 @@ import PreMarketScreen from "@/components/home/PreMarketScreen"
 import WeekendClosedScreen from "@/components/home/WeekendClosedScreen"
 import SummaryCards from "@/components/home/SummaryCards"
 import AggregationNotices from "@/components/home/AggregationNotices"
-import TwinPullChart from "@/components/home/TwinPullChart"
+import TwinPullChart, {
+  type ChartSeries,
+} from "@/components/home/TwinPullChart"
 import StockCard from "@/components/home/StockCard"
 import GeminiSummaryModal from "@/components/home/GeminiSummaryModal"
 
 const GEMINI_RETRY_DELAY_MS = 4000
 const GEMINI_RETRY_MAX = 6
 
+export type HomeView = "twin" | "foreign" | "institution"
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 function fetchRefined(): Promise<MarketRefinedResponse> {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/market/refined`).then((res) =>
-    res.json()
-  )
+  return fetch(`${apiUrl}/market/refined`).then((res) => res.json())
 }
 
-export default function HomePageClient() {
+function fetchForeign(): Promise<MarketListResponse> {
+  return fetch(`${apiUrl}/market/foreign`).then((res) => res.json())
+}
+
+function fetchInstitution(): Promise<MarketListResponse> {
+  return fetch(`${apiUrl}/market/institution`).then((res) => res.json())
+}
+
+function fetchForView(view: HomeView) {
+  if (view === "twin") return fetchRefined()
+  if (view === "foreign") return fetchForeign()
+  return fetchInstitution()
+}
+
+function getChartSeries(view: HomeView): ChartSeries {
+  if (view === "foreign") return "foreign"
+  if (view === "institution") return "institution"
+  return "both"
+}
+
+function getPageTitle(view: HomeView): string {
+  if (view === "twin") return "오늘의 쌍끌이 종목 Top 10"
+  if (view === "foreign") return "외국인 순매수 Top 10"
+  return "기관 순매수 Top 10"
+}
+
+export default function HomePageClient({
+  view = "twin",
+}: {
+  view?: HomeView
+}) {
   const [data, setData] = useState<Stock[]>([])
   const [geminiText, setGeminiText] = useState("")
   const [geminiPending, setGeminiPending] = useState(false)
@@ -61,14 +99,24 @@ export default function HomePageClient() {
     }
     if (isWeekendClosed === false && isPreMarket === false) {
       NProgress.start()
-      fetchRefined()
-        .then((res) => {
-          if (res.success && Array.isArray(res.data?.refined)) {
-            setData(res.data.refined)
-            if (res.data.gemini?.text) {
-              setGeminiText(res.data.gemini.text)
+      Promise.all([
+        fetchForView(view),
+        view !== "twin" ? fetchRefined() : null,
+      ])
+        .then(([mainRes, refinedRes]) => {
+          if (mainRes.success && Array.isArray(mainRes.data?.refined)) {
+            setData(mainRes.data.refined)
+          }
+          const geminiSource = refinedRes ?? mainRes
+          if (
+            geminiSource.success &&
+            "gemini" in geminiSource.data
+          ) {
+            const refined = geminiSource.data as MarketRefinedResponse["data"]
+            if (refined.gemini?.text) {
+              setGeminiText(refined.gemini.text)
               setGeminiPending(false)
-            } else if (res.data.geminiPending === true) {
+            } else if (refined.geminiPending === true) {
               setGeminiPending(true)
             }
           }
@@ -85,7 +133,7 @@ export default function HomePageClient() {
         NProgress.done()
       }
     }
-  }, [isPreMarket, isWeekendClosed])
+  }, [isPreMarket, isWeekendClosed, view])
 
   // geminiPending일 때 10초마다 재호출 (최대 GEMINI_RETRY_MAX회)
   useEffect(() => {
@@ -124,7 +172,9 @@ export default function HomePageClient() {
   if (isPreMarket) return <PreMarketScreen />
   if (isLoading) return <ChartSkeleton />
 
-  const top10 = data.slice(0, 10)
+  const displayedList = data.slice(0, 10)
+  const chartSeries = getChartSeries(view)
+  const pageTitle = getPageTitle(view)
   const totalForeign = data.reduce((acc, cur) => acc + cur.foreignAmount, 0)
   const totalInstitution = data.reduce(
     (acc, cur) => acc + cur.institutionAmount,
@@ -133,10 +183,8 @@ export default function HomePageClient() {
   const totalFund = data.reduce((acc, cur) => acc + cur.fundAmount, 0)
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900 p-4 sm:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-        오늘의 쌍끌이 종목 Top 10
-      </h1>
+    <main>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">{pageTitle}</h1>
       <p className="text-xs sm:text-sm text-gray-500 mb-2 whitespace-nowrap overflow-x-auto">
         ** 본 데이터는 한국투자증권 OpenAPI를 기반으로 제공됩니다. **
       </p>
@@ -145,11 +193,13 @@ export default function HomePageClient() {
         showInstitutionUnavailableBanner={showInstitutionUnavailableBanner}
       />
 
-      <div className="mb-6 flex justify-center">
-        {geminiPending && !geminiText && (
-          <p className="text-sm text-gray-500">AI 요약 생성 중…</p>
-        )}
-      </div>
+      {(geminiPending || geminiText) && (
+        <div className="mb-6 flex justify-center">
+          {geminiPending && !geminiText && (
+            <p className="text-sm text-gray-500">AI 요약 생성 중…</p>
+          )}
+        </div>
+      )}
 
       <SummaryCards
         totalForeign={totalForeign}
@@ -169,7 +219,11 @@ export default function HomePageClient() {
             </button>
           </div>
         )}
-        <TwinPullChart data={top10} isMobile={isMobile} />
+        <TwinPullChart
+          data={displayedList}
+          isMobile={isMobile}
+          series={chartSeries}
+        />
       </section>
 
       {geminiText && isMobile && (
@@ -184,8 +238,17 @@ export default function HomePageClient() {
         </div>
       )}
 
-      <section className="space-y-4" aria-label="오늘의 쌍끌이 종목 목록">
-        {data.map((stock) => (
+      <section
+        className="space-y-4"
+        aria-label={
+          view === "twin"
+            ? "오늘의 쌍끌이 종목 목록"
+            : view === "foreign"
+              ? "외국인 순매수 종목 목록"
+              : "기관 순매수 종목 목록"
+        }
+      >
+        {displayedList.map((stock: Stock) => (
           <StockCard key={stock.code} stock={stock} />
         ))}
       </section>
