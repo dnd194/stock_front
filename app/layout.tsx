@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AddToHomeScreenBanner from "@/components/AddToHomeScreen/AddToHomeScreenBanner";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -118,6 +119,7 @@ export default function RootLayout({
           </>
         )}
         {children}
+        <AddToHomeScreenBanner />
       </body>
     </html>
   );
