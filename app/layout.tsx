@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  manifest: "/manifest.json",
   icons: {
     icon: [
       { url: "/favicon_chart.ico", sizes: "32x32", type: "image/png" },
@@ -71,6 +72,11 @@ export const metadata: Metadata = {
     description:
       "오늘의 외국인·기관 동시 순매수 쌍끌이 종목을 확인하세요. 한국투자증권 OpenAPI 기반 AI 분석 제공.",
     images: [SEO_IMAGE_URL],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "쌍끌이",
   },
   robots: {
     index: true,
