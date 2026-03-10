@@ -99,20 +99,13 @@ export default function HomePageClient({
     }
     if (isWeekendClosed === false && isPreMarket === false) {
       NProgress.start()
-      Promise.all([
-        fetchForView(view),
-        view !== "twin" ? fetchRefined() : null,
-      ])
-        .then(([mainRes, refinedRes]) => {
-          if (mainRes.success && Array.isArray(mainRes.data?.refined)) {
-            setData(mainRes.data.refined)
+      fetchForView(view)
+        .then((res) => {
+          if (res.success && Array.isArray(res.data?.refined)) {
+            setData(res.data.refined)
           }
-          const geminiSource = refinedRes ?? mainRes
-          if (
-            geminiSource.success &&
-            "gemini" in geminiSource.data
-          ) {
-            const refined = geminiSource.data as MarketRefinedResponse["data"]
+          if (res.success && res.data && "gemini" in res.data) {
+            const refined = res.data as MarketRefinedResponse["data"]
             if (refined.gemini?.text) {
               setGeminiText(refined.gemini.text)
               setGeminiPending(false)
@@ -135,25 +128,60 @@ export default function HomePageClient({
     }
   }, [isPreMarket, isWeekendClosed, view])
 
-  // geminiPending일 때 10초마다 재호출 (최대 GEMINI_RETRY_MAX회)
+  // geminiPending일 때 view에 맞는 API로 재호출 (최대 GEMINI_RETRY_MAX회)
   useEffect(() => {
     if (!geminiPending || geminiText) return
+
+    const extractGeminiText = (
+      res: MarketRefinedResponse | MarketListResponse
+    ): string | undefined => {
+      const data = res.data as { gemini?: { text: string } } | undefined
+      return data?.gemini?.text
+    }
 
     const scheduleRetry = () => {
       retryTimeoutRef.current = setTimeout(() => {
         retryCountRef.current += 1
-        fetchRefined().then((res) => {
-          if (res.success && res.data?.gemini?.text) {
-            setGeminiText(res.data.gemini.text)
+        const tryResolve = (res: MarketRefinedResponse | MarketListResponse) => {
+          const text = extractGeminiText(res)
+          if (res.success && text) {
+            setGeminiText(text)
             setGeminiPending(false)
             retryCountRef.current = 0
-          } else if (retryCountRef.current < GEMINI_RETRY_MAX) {
-            scheduleRetry()
-          } else {
-            setGeminiPending(false)
-            retryCountRef.current = 0
+            return true
           }
-        })
+          return false
+        }
+
+        fetchForView(view)
+          .then((res) => {
+            if (tryResolve(res)) return
+            if (view !== "twin") {
+              return fetchRefined().then((refinedRes) => {
+                if (tryResolve(refinedRes)) return
+                if (retryCountRef.current < GEMINI_RETRY_MAX) {
+                  scheduleRetry()
+                } else {
+                  setGeminiPending(false)
+                  retryCountRef.current = 0
+                }
+              })
+            }
+            if (retryCountRef.current < GEMINI_RETRY_MAX) {
+              scheduleRetry()
+            } else {
+              setGeminiPending(false)
+              retryCountRef.current = 0
+            }
+          })
+          .catch(() => {
+            if (retryCountRef.current < GEMINI_RETRY_MAX) {
+              scheduleRetry()
+            } else {
+              setGeminiPending(false)
+              retryCountRef.current = 0
+            }
+          })
       }, GEMINI_RETRY_DELAY_MS)
     }
 
@@ -165,7 +193,7 @@ export default function HomePageClient({
         retryTimeoutRef.current = null
       }
     }
-  }, [geminiPending, geminiText])
+  }, [geminiPending, geminiText, view])
 
   if (isWeekendClosed === null || isPreMarket === null) return <ChartSkeleton />
   if (isWeekendClosed) return <WeekendClosedScreen />
