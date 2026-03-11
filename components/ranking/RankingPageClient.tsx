@@ -19,15 +19,15 @@ const DISPLAY_LIMIT = 30
 export type RankingView = "total" | "foreign" | "institution"
 
 function fetchRefined(): Promise<MarketRefinedResponse> {
-  return fetch(`${apiUrl}/market/total`).then((res) => res.json())
+  return fetch(`${apiUrl}/ranking/total`).then((res) => res.json())
 }
 
 function fetchForeign(): Promise<MarketListResponse> {
-  return fetch(`${apiUrl}/market/foreign`).then((res) => res.json())
+  return fetch(`${apiUrl}/ranking/foreign`).then((res) => res.json())
 }
 
 function fetchInstitution(): Promise<MarketListResponse> {
-  return fetch(`${apiUrl}/market/institution`).then((res) => res.json())
+  return fetch(`${apiUrl}/ranking/institution`).then((res) => res.json())
 }
 
 function fetchForView(view: RankingView) {
