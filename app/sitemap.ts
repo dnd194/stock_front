@@ -23,6 +23,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${siteUrl}/ranking/total`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/ranking/foreign`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/ranking/institution`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.8,
+    },
+    {
       url: `${siteUrl}/`,
       lastModified: new Date(),
       changeFrequency: "daily",

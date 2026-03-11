@@ -13,16 +13,16 @@ import {
   isWeekendClosedWindow,
 } from "@/lib/kst"
 import { useIsMobile } from "@/hooks/useIsMobile"
-import ChartSkeleton from "@/components/home/ChartSkeleton"
-import PreMarketScreen from "@/components/home/PreMarketScreen"
-import WeekendClosedScreen from "@/components/home/WeekendClosedScreen"
-import SummaryCards from "@/components/home/SummaryCards"
-import AggregationNotices from "@/components/home/AggregationNotices"
+import ChartSkeleton from "@/components/screens/ChartSkeleton"
+import PreMarketScreen from "@/components/screens/PreMarketScreen"
+import WeekendClosedScreen from "@/components/screens/WeekendClosedScreen"
+import SummaryCards from "@/components/stock/SummaryCards"
+import AggregationNotices from "@/components/notices/AggregationNotices"
 import TwinPullChart, {
   type ChartSeries,
-} from "@/components/home/TwinPullChart"
-import StockCard from "@/components/home/StockCard"
-import GeminiSummaryModal from "@/components/home/GeminiSummaryModal"
+} from "@/components/stock/TwinPullChart"
+import StockCard from "@/components/stock/StockCard"
+import GeminiSummaryModal from "@/components/modals/GeminiSummaryModal"
 
 const GEMINI_RETRY_DELAY_MS = 4000
 const GEMINI_RETRY_MAX = 6
@@ -32,7 +32,7 @@ export type HomeView = "twin" | "foreign" | "institution"
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 function fetchRefined(): Promise<MarketRefinedResponse> {
-  return fetch(`${apiUrl}/market/refined`).then((res) => res.json())
+  return fetch(`${apiUrl}/market/total`).then((res) => res.json())
 }
 
 function fetchForeign(): Promise<MarketListResponse> {
@@ -261,7 +261,7 @@ export default function HomePageClient({
             onClick={() => setGeminiModalOpen(true)}
             className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-lg hover:bg-gray-50"
           >
-            ✨ AI 분석
+            ✨ <strong>AI 분석</strong>
           </button>
         </div>
       )}
