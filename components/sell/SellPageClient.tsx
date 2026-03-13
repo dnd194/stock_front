@@ -16,36 +16,36 @@ import StockCard from "@/components/stock/StockCard"
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 const DISPLAY_LIMIT = 30
 
-export type RankingView = "total" | "foreign" | "institution"
+export type SellView = "total" | "foreign" | "institution"
 
 function fetchRefined(): Promise<MarketRefinedResponse> {
-  return fetch(`${apiUrl}/ranking/total`).then((res) => res.json())
+  return fetch(`${apiUrl}/sell/total`).then((res) => res.json())
 }
 
 function fetchForeign(): Promise<MarketListResponse> {
-  return fetch(`${apiUrl}/ranking/foreign`).then((res) => res.json())
+  return fetch(`${apiUrl}/sell/foreign`).then((res) => res.json())
 }
 
 function fetchInstitution(): Promise<MarketListResponse> {
-  return fetch(`${apiUrl}/ranking/institution`).then((res) => res.json())
+  return fetch(`${apiUrl}/sell/institution`).then((res) => res.json())
 }
 
-function fetchForView(view: RankingView) {
+function fetchForView(view: SellView) {
   if (view === "total") return fetchRefined()
   if (view === "foreign") return fetchForeign()
   return fetchInstitution()
 }
 
-function getPageTitle(view: RankingView): string {
-  if (view === "total") return "상위종목 쌍끌이"
-  if (view === "foreign") return "상위종목 외국인"
-  return "상위종목 기관"
+function getPageTitle(view: SellView): string {
+  if (view === "total") return "순매도 상위종목 쌍매도"
+  if (view === "foreign") return "순매도 상위종목 외국인"
+  return "순매도 상위종목 기관"
 }
 
-export default function RankingPageClient({
+export default function SellPageClient({
   view = "total",
 }: {
-  view?: RankingView
+  view?: SellView
 }) {
   const [data, setData] = useState<Stock[]>([])
   const [isLoading, setIsLoading] = useState(true)

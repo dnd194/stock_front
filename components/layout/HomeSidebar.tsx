@@ -8,10 +8,42 @@ type HomeSidebarProps = {
   onClose: () => void
 }
 
-const menuItems = [
-  { href: "/home", label: "Top10" },
-  { href: "/ranking/total", label: "상위종목" },
-] as const
+const buyMenu = {
+  label: "순매수",
+  children: [
+    { href: "/home", label: "Top10" },
+    { href: "/ranking/total", label: "상위종목" },
+  ],
+} as const
+
+const sellMenu = {
+  label: "순매도",
+  children: [
+    { href: "/sell/total", label: "상위종목" },
+  ],
+} as const
+
+function isBuyActive(pathname: string) {
+  return (
+    pathname === "/home" ||
+    pathname === "/home/foreign" ||
+    pathname === "/home/institution" ||
+    pathname.startsWith("/ranking")
+  )
+}
+
+function isSellActive(pathname: string) {
+  return pathname.startsWith("/sell")
+}
+
+function isLinkActive(pathname: string, href: string) {
+  if (href === "/home") {
+    return pathname === "/home" || pathname === "/home/foreign" || pathname === "/home/institution"
+  }
+  if (href.startsWith("/ranking")) return pathname.startsWith("/ranking")
+  if (href.startsWith("/sell")) return pathname.startsWith("/sell")
+  return pathname === href
+}
 
 export default function HomeSidebar({ isOpen, onClose }: HomeSidebarProps) {
   const pathname = usePathname()
@@ -58,25 +90,39 @@ export default function HomeSidebar({ isOpen, onClose }: HomeSidebarProps) {
         </div>
         <nav className="p-4">
           <ul className="space-y-1">
-            {menuItems.map(({ href, label }) => {
+            {[buyMenu, sellMenu].map((menu) => {
               const isActive =
-                href === "/home"
-                  ? pathname === "/home" ||
-                    pathname === "/home/foreign" ||
-                    pathname === "/home/institution"
-                  : pathname.startsWith("/ranking")
+                menu.label === "순매수" ? isBuyActive(pathname) : isSellActive(pathname)
+
               return (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    onClick={onClose}
+                <li key={menu.label}>
+                  <div
                     className={`
-                      block rounded-lg px-4 py-3 text-sm font-medium transition
-                      ${isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}
+                      rounded-lg px-4 py-3 text-sm font-semibold transition
+                      ${isActive ? "bg-gray-100 text-gray-900" : "text-gray-600"}
                     `}
                   >
-                    {label}
-                  </Link>
+                    {menu.label}
+                  </div>
+                  <ul className="mt-1 pl-4 space-y-1 border-l-2 border-gray-200 ml-2">
+                    {menu.children.map(({ href, label }) => {
+                      const linkActive = isLinkActive(pathname, href)
+                      return (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            onClick={onClose}
+                            className={`
+                              block rounded-lg px-3 py-2 text-sm font-medium transition
+                              ${linkActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}
+                            `}
+                          >
+                            {label}
+                          </Link>
+                        </li>
+                      )
+                    })}
+                  </ul>
                 </li>
               )
             })}
