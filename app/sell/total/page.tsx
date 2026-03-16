@@ -6,7 +6,7 @@ const seoImagePath = "/seoImage_resize.png"
 const seoImageUrl = `${siteUrl}${seoImagePath}`
 
 export const metadata: Metadata = {
-  title: "순매도 상위종목 쌍매도도",
+  title: "쌍매도 상위종목",
   description:
     "외국인·기관 동시 순매도 상위 종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
   alternates: {

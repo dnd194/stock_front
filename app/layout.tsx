@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Toaster } from "sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AddToHomeScreenBanner from "@/components/AddToHomeScreen/AddToHomeScreenBanner";
@@ -119,6 +120,7 @@ export default function RootLayout({
           </>
         )}
         {children}
+        <Toaster position="top-center" richColors />
         <AddToHomeScreenBanner />
       </body>
     </html>

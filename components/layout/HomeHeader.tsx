@@ -17,6 +17,12 @@ const rankingTabs = [
   { href: "/ranking/institution", label: "기관" },
 ] as const
 
+const historyTabs = [
+  { href: "/history/total", label: "쌍끌이" },
+  { href: "/history/foreign", label: "외국인" },
+  { href: "/history/institution", label: "기관" },
+] as const
+
 const sellTabs = [
   { href: "/sell/total", label: "쌍매도" },
   { href: "/sell/foreign", label: "외국인" },
@@ -29,7 +35,8 @@ export default function HomeHeader() {
 
   const isSell = pathname.startsWith("/sell")
   const isRanking = pathname.startsWith("/ranking")
-  const tabs = isSell ? sellTabs : isRanking ? rankingTabs : top10Tabs
+  const isHistory = pathname.startsWith("/history")
+  const tabs = isSell ? sellTabs : isRanking ? rankingTabs : isHistory ? historyTabs : top10Tabs
 
   return (
     <>
@@ -56,7 +63,11 @@ export default function HomeHeader() {
         </button>
         <nav
           className="flex flex-1 gap-1 p-1 bg-gray-100 rounded-xl border border-gray-200"
-          aria-label={isSell ? "순매도 상위종목 탭" : isRanking ? "순매수 상위종목 탭" : "Top10 탭"}
+          aria-label={
+            isSell ? "순매도 상위종목 탭" :
+            isRanking ? "순매수 상위종목 탭" :
+            isHistory ? "날짜검색 탭" : "Top10 탭"
+          }
         >
           {tabs.map(({ href, label }) => {
             const isActive = pathname === href

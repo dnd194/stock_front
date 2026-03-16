@@ -13,6 +13,7 @@ const buyMenu = {
   children: [
     { href: "/home", label: "Top10" },
     { href: "/ranking/total", label: "상위종목" },
+    { href: "/history/total", label: "날짜검색" },
   ],
 } as const
 
@@ -28,7 +29,8 @@ function isBuyActive(pathname: string) {
     pathname === "/home" ||
     pathname === "/home/foreign" ||
     pathname === "/home/institution" ||
-    pathname.startsWith("/ranking")
+    pathname.startsWith("/ranking") ||
+    pathname.startsWith("/history")
   )
 }
 
@@ -41,6 +43,7 @@ function isLinkActive(pathname: string, href: string) {
     return pathname === "/home" || pathname === "/home/foreign" || pathname === "/home/institution"
   }
   if (href.startsWith("/ranking")) return pathname.startsWith("/ranking")
+  if (href.startsWith("/history")) return pathname.startsWith("/history")
   if (href.startsWith("/sell")) return pathname.startsWith("/sell")
   return pathname === href
 }
