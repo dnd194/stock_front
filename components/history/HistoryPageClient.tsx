@@ -16,17 +16,19 @@ import StockCard from "@/components/stock/StockCard"
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 const DISPLAY_LIMIT = 30
+const MIN_DATE = "2026-03-10"
 
 export type HistoryView = "total" | "foreign" | "institution"
 
-function getTodayKST(): string {
+function getInitialDate(): string {
   const now = new Date()
   const kstMs = now.getTime() + 9 * 60 * 60 * 1000
   const d = new Date(kstMs)
   const y = d.getUTCFullYear()
   const m = (d.getUTCMonth() + 1).toString().padStart(2, "0")
   const day = d.getUTCDate().toString().padStart(2, "0")
-  return `${y}-${m}-${day}`
+  const today = `${y}-${m}-${day}`
+  return today >= MIN_DATE ? today : MIN_DATE
 }
 
 function fetchRefined(date: string): Promise<MarketRefinedResponse> {
@@ -59,7 +61,7 @@ export default function HistoryPageClient({
   view?: HistoryView
 }) {
   const [data, setData] = useState<Stock[]>([])
-  const [selectedDate, setSelectedDate] = useState(() => getTodayKST())
+  const [selectedDate, setSelectedDate] = useState(() => getInitialDate())
   const [isLoading, setIsLoading] = useState(true)
   const [isWeekendClosed, setIsWeekendClosed] = useState<boolean | null>(null)
   const [isPreMarket, setIsPreMarket] = useState<boolean | null>(null)
@@ -76,8 +78,9 @@ export default function HistoryPageClient({
       return
     }
     if (isWeekendClosed === false && isPreMarket === false) {
+      const effectiveDate = selectedDate >= MIN_DATE ? selectedDate : MIN_DATE
       NProgress.start()
-      const fetchPromise = fetchForView(view, selectedDate)
+      const fetchPromise = fetchForView(view, effectiveDate)
         .then((res) => {
           if (res.success && Array.isArray(res.data?.refined)) {
             setData(res.data.refined)
@@ -118,7 +121,11 @@ export default function HistoryPageClient({
           <input
             type="date"
             value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            min={MIN_DATE}
+            onChange={(e) => {
+              const val = e.target.value
+              if (val >= MIN_DATE) setSelectedDate(val)
+            }}
             className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-label="날짜 선택"
           />
