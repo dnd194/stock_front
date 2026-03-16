@@ -9,6 +9,7 @@ const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const SEO_IMAGE_PATH = "/seoImage_resize.png";
 const SEO_IMAGE_URL = `${SITE_URL}${SEO_IMAGE_PATH}`;
+const GSC_VERIFY_TOKEN = process.env.NEXT_PUBLIC_GSC_VERIFY_TOKEN;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,6 +91,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
       "max-video-preview": -1,
     },
+  },
+  verification: {
+    google: GSC_VERIFY_TOKEN ?? "",
   },
 };
 

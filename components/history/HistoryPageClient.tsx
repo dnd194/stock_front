@@ -49,10 +49,10 @@ function fetchForView(view: HistoryView, date: string) {
   return fetchInstitution(date)
 }
 
-function getPageTitle(view: HistoryView): string {
-  if (view === "total") return "날짜검색 쌍끌이"
-  if (view === "foreign") return "날짜검색 외국인 순매수"
-  return "날짜검색 기관 순매수"
+function getPageTitle(view: HistoryView, date: string): string {
+  if (view === "total") return `${date} 쌍끌이`
+  if (view === "foreign") return `${date} 외국인 순매수`
+  return `${date} 기관 순매수`
 }
 
 export default function HistoryPageClient({
@@ -111,7 +111,7 @@ export default function HistoryPageClient({
   if (isPreMarket) return <PreMarketScreen />
 
   const displayedList = data.slice(0, DISPLAY_LIMIT)
-  const pageTitle = getPageTitle(view)
+  const pageTitle = getPageTitle(view ,selectedDate)
 
   return (
     <main>
