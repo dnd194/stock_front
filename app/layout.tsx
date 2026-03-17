@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     ],
   },
   title: {
-    default: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
+    default: "외국인·기관 동시 순매수 Top10 | 오늘의 쌍끌이",
     template: "%s | 오늘의 쌍끌이",
   },
   description:
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
-    title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
+    title: "외국인·기관 동시 순매수 Top10 | 오늘의 쌍끌이",
     description:
       "오늘의 외국인·기관 동시 순매수 쌍끌이 종목을 확인하세요. 한국투자증권 OpenAPI 기반 AI 분석 제공.",
     url: SITE_URL,
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
+    title: "외국인·기관 동시 순매수 Top10 | 오늘의 쌍끌이",
     description:
       "오늘의 외국인·기관 동시 순매수 쌍끌이 종목을 확인하세요. 한국투자증권 OpenAPI 기반 AI 분석 제공.",
     images: [SEO_IMAGE_URL],

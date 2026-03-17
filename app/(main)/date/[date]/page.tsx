@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "날짜별 순매수 | 오늘의 쌍끌이" }
   }
   return {
-    title: `${date} 외국인·기관 순매수 | 오늘의 쌍끌이`,
+    title: `${date} 외국인·기관 순매수`,
     description: `${date} 날짜의 외국인·기관 동시 순매수 상위 종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.`,
     alternates: {
       canonical: `${siteUrl}/date/${date}`,
