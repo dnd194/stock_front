@@ -8,25 +8,41 @@ const buyMenu = {
   label: "순매수",
   children: [
     { href: "/", label: "Top10" },
-    { href: "/ranking/total", label: "상위종목" },
-    { href: "/history/total", label: "날짜검색" },
+    { href: "/total-buy-top30", label: "상위종목" },
+    { href: "/date", label: "날짜검색" },
   ],
 } as const
 
 const sellMenu = {
   label: "순매도",
   children: [
-    { href: "/sell/total", label: "상위종목" },
+    { href: "/total-sell-top30", label: "상위종목" },
   ],
 } as const
 
 function isLinkActive(pathname: string, href: string) {
   if (href === "/") {
-    return pathname === "/" || pathname === "/foreign" || pathname === "/institution"
+    return (
+      pathname === "/" ||
+      pathname === "/foreign-buy-top10" ||
+      pathname === "/institution-buy-top10"
+    )
   }
-  if (href.startsWith("/ranking")) return pathname.startsWith("/ranking")
-  if (href.startsWith("/history")) return pathname.startsWith("/history")
-  if (href.startsWith("/sell")) return pathname.startsWith("/sell")
+  if (href === "/total-buy-top30") {
+    return (
+      pathname === "/total-buy-top30" ||
+      pathname === "/foreign-buy-top30" ||
+      pathname === "/institution-buy-top30"
+    )
+  }
+  if (href === "/date") return pathname.startsWith("/date")
+  if (href === "/total-sell-top30") {
+    return (
+      pathname === "/total-sell-top30" ||
+      pathname === "/foreign-sell-top30" ||
+      pathname === "/institution-sell-top30"
+    )
+  }
   return pathname === href
 }
 
@@ -34,7 +50,16 @@ export default function MobileMoreButton() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  if (pathname.startsWith("/ranking") || pathname.startsWith("/sell") || pathname.startsWith("/history")) return null
+  if (
+    pathname.startsWith("/total-buy-top30") ||
+    pathname.startsWith("/foreign-buy-top30") ||
+    pathname.startsWith("/institution-buy-top30") ||
+    pathname.startsWith("/total-sell-top30") ||
+    pathname.startsWith("/foreign-sell-top30") ||
+    pathname.startsWith("/institution-sell-top30") ||
+    pathname.startsWith("/date")
+  )
+    return null
 
   return (
     <div className="fixed bottom-16 right-6 z-40 md:hidden flex flex-col items-end gap-2">

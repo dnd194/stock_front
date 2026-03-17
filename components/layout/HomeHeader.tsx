@@ -2,40 +2,53 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import HomeSidebar from "./HomeSidebar"
 
 const top10Tabs = [
   { href: "/", label: "쌍끌이" },
-  { href: "/foreign", label: "외국인" },
-  { href: "/institution", label: "기관" },
+  { href: "/foreign-buy-top10", label: "외국인" },
+  { href: "/institution-buy-top10", label: "기관" },
 ] as const
 
 const rankingTabs = [
-  { href: "/ranking/total", label: "쌍끌이" },
-  { href: "/ranking/foreign", label: "외국인" },
-  { href: "/ranking/institution", label: "기관" },
-] as const
-
-const historyTabs = [
-  { href: "/history/total", label: "쌍끌이" },
-  { href: "/history/foreign", label: "외국인" },
-  { href: "/history/institution", label: "기관" },
+  { href: "/total-buy-top30", label: "쌍끌이" },
+  { href: "/foreign-buy-top30", label: "외국인" },
+  { href: "/institution-buy-top30", label: "기관" },
 ] as const
 
 const sellTabs = [
-  { href: "/sell/total", label: "쌍매도" },
-  { href: "/sell/foreign", label: "외국인" },
-  { href: "/sell/institution", label: "기관" },
+  { href: "/total-sell-top30", label: "쌍매도" },
+  { href: "/foreign-sell-top30", label: "외국인" },
+  { href: "/institution-sell-top30", label: "기관" },
 ] as const
 
 export default function HomeHeader() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const isSell = pathname.startsWith("/sell")
-  const isRanking = pathname.startsWith("/ranking")
-  const isHistory = pathname.startsWith("/history")
+  const isSell =
+    pathname.startsWith("/total-sell") ||
+    pathname.startsWith("/foreign-sell") ||
+    pathname.startsWith("/institution-sell")
+  const isRanking =
+    pathname.startsWith("/total-buy-top30") ||
+    pathname.startsWith("/foreign-buy-top30") ||
+    pathname.startsWith("/institution-buy-top30")
+  const isHistory = pathname.startsWith("/date/")
+  const dateMatch = pathname.match(/^\/date\/(\d{4}-\d{2}-\d{2})$/)
+  const historyTabs = dateMatch
+    ? [
+        { href: `/date/${dateMatch[1]}`, label: "쌍끌이" },
+        { href: `/date/${dateMatch[1]}?view=foreign`, label: "외국인" },
+        { href: `/date/${dateMatch[1]}?view=institution`, label: "기관" },
+      ]
+    : [
+        { href: "/date", label: "쌍끌이" },
+        { href: "/date?view=foreign", label: "외국인" },
+        { href: "/date?view=institution", label: "기관" },
+      ]
   const tabs = isSell ? sellTabs : isRanking ? rankingTabs : isHistory ? historyTabs : top10Tabs
 
   return (
@@ -70,7 +83,20 @@ export default function HomeHeader() {
           }
         >
           {tabs.map(({ href, label }) => {
-            const isActive = href === "/" ? pathname === "/" : pathname === href
+            let isActive: boolean
+            if (href === "/") {
+              isActive = pathname === "/"
+            } else if (href.includes("?")) {
+              const [path, query] = href.split("?")
+              const view = query?.replace("view=", "")
+              isActive =
+                pathname === path && searchParams.get("view") === view
+            } else if (isHistory && pathname.startsWith("/date/")) {
+              // 쌍끌이 탭: view 파라미터가 없을 때만 활성
+              isActive = pathname === href && !searchParams.get("view")
+            } else {
+              isActive = pathname === href
+            }
             return (
               <Link
                 key={href}

@@ -20,9 +20,20 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },
-      { source: "/home/foreign", destination: "/foreign", permanent: true },
-      { source: "/home/institution", destination: "/institution", permanent: true },
-      { source: "/home/ranking", destination: "/ranking/total", permanent: true },
+      { source: "/home/foreign", destination: "/foreign-buy-top10", permanent: true },
+      { source: "/home/institution", destination: "/institution-buy-top10", permanent: true },
+      { source: "/home/ranking", destination: "/total-buy-top30", permanent: true },
+      { source: "/foreign", destination: "/foreign-buy-top10", permanent: true },
+      { source: "/institution", destination: "/institution-buy-top10", permanent: true },
+      { source: "/ranking/total", destination: "/total-buy-top30", permanent: true },
+      { source: "/ranking/foreign", destination: "/foreign-buy-top30", permanent: true },
+      { source: "/ranking/institution", destination: "/institution-buy-top30", permanent: true },
+      { source: "/sell/total", destination: "/total-sell-top30", permanent: true },
+      { source: "/sell/foreign", destination: "/foreign-sell-top30", permanent: true },
+      { source: "/sell/institution", destination: "/institution-sell-top30", permanent: true },
+      { source: "/history/total", destination: "/date", permanent: true },
+      { source: "/history/foreign", destination: "/date", permanent: true },
+      { source: "/history/institution", destination: "/date", permanent: true },
     ]
   },
   async headers() {

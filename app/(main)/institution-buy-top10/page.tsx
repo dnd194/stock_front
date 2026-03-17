@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     "한국투자증권 OpenAPI",
   ],
   alternates: {
-    canonical: `${siteUrl}/institution`,
+    canonical: `${siteUrl}/institution-buy-top10`,
   },
   openGraph: {
     title: "기관 순매수 Top10 | 오늘의 쌍끌이",
     description:
       "기관 순매수 상위 종목 Top 10을 실시간으로 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
-    url: `${siteUrl}/institution`,
+    url: `${siteUrl}/institution-buy-top10`,
     type: "website",
     locale: "ko_KR",
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function InstitutionPage() {
+export default function InstitutionBuyTop10Page() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -52,7 +52,7 @@ export default function InstitutionPage() {
     description:
       "기관 순매수 상위 종목 Top 10을 실시간으로 제공합니다.",
     inLanguage: "ko-KR",
-    url: `${siteUrl}/institution`,
+    url: `${siteUrl}/institution-buy-top10`,
     image: seoImageUrl,
     isPartOf: {
       "@type": "WebSite",
