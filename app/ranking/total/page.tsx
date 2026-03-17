@@ -6,16 +6,16 @@ const seoImagePath = "/seoImage_resize.png"
 const seoImageUrl = `${siteUrl}${seoImagePath}`
 
 export const metadata: Metadata = {
-  title: "상위종목 쌍끌이",
+  title: "외국인·기관 순매수 상위종목",
   description:
     "외국인·기관 동시 순매수 상위 종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
   alternates: {
     canonical: `${siteUrl}/ranking/total`,
   },
   openGraph: {
-    title: "상위종목 쌍끌이 | 오늘의 쌍끌이",
+    title: "외국인·기관 순매수 상위종목 | 오늘의 쌍끌이",
     description:
-      "외국인·기관 동시 순매수 상위 종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
+      "외국인·기관 순매수 상위종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
     url: `${siteUrl}/ranking/total`,
     type: "website",
     locale: "ko_KR",

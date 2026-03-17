@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/sell/total`,
   },
   openGraph: {
-    title: "순매도 상위종목 쌍매도도 | 오늘의 쌍끌이",
+    title: "순매도 상위종목 쌍매도 | 오늘의 쌍끌이",
     description:
       "외국인·기관 동시 순매도 상위 종목을 확인하세요. 한국투자증권 OpenAPI 기반 제공.",
     url: `${siteUrl}/sell/total`,
