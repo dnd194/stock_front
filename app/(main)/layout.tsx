@@ -1,7 +1,7 @@
 import HomeHeader from "@/components/layout/HomeHeader"
 import MobileMoreButton from "@/components/layout/MobileMoreButton"
 
-export default function HomeLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode

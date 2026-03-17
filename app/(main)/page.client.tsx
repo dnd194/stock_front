@@ -128,7 +128,6 @@ export default function HomePageClient({
     }
   }, [isPreMarket, isWeekendClosed, view])
 
-  // geminiPending일 때 view에 맞는 API로 재호출 (최대 GEMINI_RETRY_MAX회)
   useEffect(() => {
     if (!geminiPending || geminiText) return
 

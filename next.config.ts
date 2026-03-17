@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false, // <- false로 설정
   turbopack: {},
+  async redirects() {
+    return [
+      { source: "/home", destination: "/", permanent: true },
+      { source: "/home/foreign", destination: "/foreign", permanent: true },
+      { source: "/home/institution", destination: "/institution", permanent: true },
+      { source: "/home/ranking", destination: "/ranking/total", permanent: true },
+    ]
+  },
   async headers() {
     return [
       { source: "/sw.js", headers: noCacheHeaders },

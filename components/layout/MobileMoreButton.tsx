@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 const buyMenu = {
   label: "순매수",
   children: [
-    { href: "/home", label: "Top10" },
+    { href: "/", label: "Top10" },
     { href: "/ranking/total", label: "상위종목" },
     { href: "/history/total", label: "날짜검색" },
   ],
@@ -21,8 +21,8 @@ const sellMenu = {
 } as const
 
 function isLinkActive(pathname: string, href: string) {
-  if (href === "/home") {
-    return pathname === "/home" || pathname === "/home/foreign" || pathname === "/home/institution"
+  if (href === "/") {
+    return pathname === "/" || pathname === "/foreign" || pathname === "/institution"
   }
   if (href.startsWith("/ranking")) return pathname.startsWith("/ranking")
   if (href.startsWith("/history")) return pathname.startsWith("/history")

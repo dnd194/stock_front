@@ -119,7 +119,7 @@ export default function SellPageClient({
 
       <div className="fixed bottom-6 right-6 z-40 md:hidden">
         <Link
-          href="/home"
+          href="/"
           className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-lg hover:bg-gray-50"
         >
           <svg

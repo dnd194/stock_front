@@ -45,18 +45,19 @@ export const metadata: Metadata = {
     "외국인 기관 동시 순매수",
     "국내주식",
     "코스피",
+    "코스닥",
     "AI 분석",
     "한국투자증권 OpenAPI",
   ],
   category: "finance",
   alternates: {
-    canonical: `${SITE_URL}/home`,
+    canonical: SITE_URL,
   },
   openGraph: {
     title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
     description:
       "오늘의 외국인·기관 동시 순매수 쌍끌이 종목을 확인하세요. 한국투자증권 OpenAPI 기반 AI 분석 제공.",
-    url: `${SITE_URL}/home`,
+    url: SITE_URL,
     siteName: "오늘의 쌍끌이",
     locale: "ko_KR",
     type: "website",

@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation"
 import HomeSidebar from "./HomeSidebar"
 
 const top10Tabs = [
-  { href: "/home", label: "쌍끌이" },
-  { href: "/home/foreign", label: "외국인" },
-  { href: "/home/institution", label: "기관" },
+  { href: "/", label: "쌍끌이" },
+  { href: "/foreign", label: "외국인" },
+  { href: "/institution", label: "기관" },
 ] as const
 
 const rankingTabs = [
@@ -70,7 +70,7 @@ export default function HomeHeader() {
           }
         >
           {tabs.map(({ href, label }) => {
-            const isActive = pathname === href
+            const isActive = href === "/" ? pathname === "/" : pathname === href
             return (
               <Link
                 key={href}

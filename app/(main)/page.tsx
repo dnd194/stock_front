@@ -18,13 +18,13 @@ export const metadata: Metadata = {
     "한국투자증권 OpenAPI",
   ],
   alternates: {
-    canonical: `${siteUrl}/home`,
+    canonical: siteUrl,
   },
   openGraph: {
     title: "오늘의 쌍끌이 | 외국인·기관 동시 순매수 Top10",
     description:
       "외국인·기관 동시 순매수 상위 종목 Top 10을 확인하고 AI 분석까지 받아보세요.",
-    url: `${siteUrl}/home`,
+    url: siteUrl,
     type: "website",
     locale: "ko_KR",
     images: [
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function HomePage() {
+export default function MainPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -53,7 +53,7 @@ export default function HomePage() {
     description:
       "외국인·기관 동시 순매수 상위 종목 Top 10을 확인하고 AI 분석까지 제공합니다.",
     inLanguage: "ko-KR",
-    url: `${siteUrl}/home`,
+    url: siteUrl,
     image: seoImageUrl,
     isPartOf: {
       "@type": "WebSite",
