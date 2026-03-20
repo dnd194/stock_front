@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import NProgress from "nprogress"
 import type { Stock, MarketRefinedResponse, MarketListResponse } from "@/lib/market"
 import {
@@ -36,10 +35,24 @@ function fetchForView(view: SellView) {
   return fetchInstitution()
 }
 
+function getTodayDateString(): string {
+  const now = new Date()
+  const kstMs = now.getTime() + 9 * 60 * 60 * 1000
+  const d = new Date(kstMs)
+  const y = d.getUTCFullYear()
+  const m = (d.getUTCMonth() + 1).toString().padStart(2, "0")
+  const day = d.getUTCDate().toString().padStart(2, "0")
+  return `${y}-${m}-${day}`
+}
+
 function getPageTitle(view: SellView): string {
-  if (view === "total") return "순매도 상위종목 쌍매도"
-  if (view === "foreign") return "순매도 상위종목 외국인"
-  return "순매도 상위종목 기관"
+  const base =
+    view === "total"
+      ? "쌍매도 상위종목"
+      : view === "foreign"
+        ? "외국인 순매도 상위종목"
+        : "기관 순매도 상위종목"
+  return `${getTodayDateString()} ${base}`
 }
 
 export default function SellPageClient({
@@ -96,7 +109,9 @@ export default function SellPageClient({
   return (
     <main>
       <div className="mb-2">
-        <h1 className="text-2xl sm:text-3xl font-bold shrink-0">{pageTitle}</h1>
+        <h1 className="text-base sm:text-lg md:text-xl font-bold shrink-0 whitespace-nowrap overflow-hidden text-ellipsis">
+          {pageTitle}
+        </h1>
       </div>
       <p className="text-xs sm:text-sm text-gray-500 mb-2 whitespace-nowrap overflow-x-auto">
         ** 본 데이터는 한국투자증권 OpenAPI를 기반으로 제공됩니다. **
@@ -117,27 +132,6 @@ export default function SellPageClient({
         </p>
       </footer>
 
-      <div className="fixed bottom-6 right-6 z-40 md:hidden">
-        <Link
-          href="/"
-          className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-lg hover:bg-gray-50"
-        >
-          <svg
-            className="h-4 w-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span>Top10</span>
-        </Link>
-      </div>
     </main>
   )
 }

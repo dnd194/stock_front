@@ -50,17 +50,6 @@ export default function MobileMoreButton() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  if (
-    pathname.startsWith("/total-buy-top30") ||
-    pathname.startsWith("/foreign-buy-top30") ||
-    pathname.startsWith("/institution-buy-top30") ||
-    pathname.startsWith("/total-sell-top30") ||
-    pathname.startsWith("/foreign-sell-top30") ||
-    pathname.startsWith("/institution-sell-top30") ||
-    pathname.startsWith("/date")
-  )
-    return null
-
   return (
     <div className="fixed bottom-16 right-6 z-40 md:hidden flex flex-col items-end gap-2">
       {menuOpen && (

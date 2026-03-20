@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import NProgress from "nprogress"
@@ -151,27 +150,6 @@ export default function HistoryDatePageClient({ initialDate, view }: Props) {
         </p>
       </footer>
 
-      <div className="fixed bottom-6 right-6 z-40 md:hidden">
-        <Link
-          href="/"
-          className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-lg hover:bg-gray-50"
-        >
-          <svg
-            className="h-4 w-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span>Top10</span>
-        </Link>
-      </div>
     </main>
   )
 }
