@@ -1,6 +1,16 @@
 "use client"
 
+import { useEffect } from "react"
+import { useWeekendClosedChrome } from "@/components/layout/WeekendClosedChromeProvider"
+
 export default function WeekendClosedScreen() {
+  const { setHideChrome } = useWeekendClosedChrome()
+
+  useEffect(() => {
+    setHideChrome(true)
+    return () => setHideChrome(false)
+  }, [setHideChrome])
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 flex items-center justify-center p-6">
       <div className="w-full max-w-xl rounded-3xl border border-slate-200/80 bg-white/85 p-8 sm:p-10 shadow-xl backdrop-blur">
