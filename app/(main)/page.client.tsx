@@ -16,7 +16,6 @@ import { useIsMobile } from "@/hooks/useIsMobile"
 import ChartSkeleton from "@/components/screens/ChartSkeleton"
 import PreMarketScreen from "@/components/screens/PreMarketScreen"
 import WeekendClosedScreen from "@/components/screens/WeekendClosedScreen"
-import SummaryCards from "@/components/stock/SummaryCards"
 import AggregationNotices from "@/components/notices/AggregationNotices"
 import TwinPullChart, {
   type ChartSeries,
@@ -202,12 +201,6 @@ export default function HomePageClient({
   const displayedList = data.slice(0, 10)
   const chartSeries = getChartSeries(view)
   const pageTitle = getPageTitle(view)
-  const totalForeign = data.reduce((acc, cur) => acc + cur.foreignAmount, 0)
-  const totalInstitution = data.reduce(
-    (acc, cur) => acc + cur.institutionAmount,
-    0
-  )
-  const totalFund = data.reduce((acc, cur) => acc + cur.fundAmount, 0)
 
   return (
     <main>
@@ -227,12 +220,6 @@ export default function HomePageClient({
           )}
         </div>
       )}
-
-      <SummaryCards
-        totalForeign={totalForeign}
-        totalInstitution={totalInstitution}
-        totalFund={totalFund}
-      />
 
       <section className="relative bg-white border border-gray-200 p-4 sm:p-6 rounded-2xl shadow-sm mb-10 sm:mb-12">
         {geminiText && !isMobile && (
