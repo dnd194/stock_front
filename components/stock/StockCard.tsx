@@ -18,6 +18,20 @@ function FlameIcon({ className }: { className?: string }) {
   )
 }
 
+/** 신규 매수세(1일·0일): 연속 스냅샷 0 → 불꽃 아님 */
+function NewFlowIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M12 2l2.4 7.44h7.8l-6.3 4.56 2.4 7.44L12 16.88l-6.3 4.56 2.4-7.44-6.3-4.56h7.8L12 2z" />
+    </svg>
+  )
+}
+
 /** 매수세 재유입(1일·1일): 상승·회복 흐름 (불꽃과 구분) */
 function ReentryTrendIcon({ className }: { className?: string }) {
   return (
@@ -78,7 +92,34 @@ function NetBuyStreakBlock({ stock }: { stock: Stock }) {
   const consecutive = stock.netBuyConsecutiveDays ?? 0
   if (daysInWindow < 1 && consecutive < 1) return null
 
+  const isNewBuyingFlow = daysInWindow === 1 && consecutive === 0
   const isReentryOnly = daysInWindow === 1 && consecutive === 1
+
+  if (isNewBuyingFlow) {
+    return (
+      <div className="mt-3 rounded-lg border border-sky-100 bg-sky-50/90 px-3 py-2.5">
+        <div className="flex gap-2.5">
+          <NewFlowIcon className="h-5 w-5 shrink-0 text-sky-600" />
+          <div className="min-w-0 flex-1 text-xs sm:text-sm">
+            <p className="font-medium text-sky-950">신규 매수세 · 순위 첫 진입</p>
+            <p className="mt-0.5 text-[11px] text-sky-900/80">
+              최근 7일 중 순위 진입 <strong className="tabular-nums">1</strong>일
+              · 연속{" "}
+              <strong className="tabular-nums">0</strong>일
+            </p>
+            <MetricHelpDetails>
+              <p>
+                구간 안에서는 이 순매수 유형 순위에 올라온 날이 하루뿐이고,
+                스냅샷 기준으로는 직전 날과 이어지는 연속 매수 흐름이
+                잡히지 않은 상태에 가깝습니다. 다일 연속 강세(불꽃) 패턴이
+                아니라, 이번에 새로 나타난 매수세로 보는 편이 자연스러워요.
+              </p>
+            </MetricHelpDetails>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (isReentryOnly) {
     return (
@@ -111,8 +152,14 @@ function NetBuyStreakBlock({ stock }: { stock: Stock }) {
           <p className="font-medium text-orange-950">
             최근 7일 중{" "}
             <strong className="tabular-nums">{daysInWindow}</strong>일 순위
-            진입 · 연속{" "}
-            <strong className="tabular-nums">{consecutive}</strong>일
+            진입
+            {consecutive >= 1 ? (
+              <>
+                {" "}
+                · 연속{" "}
+                <strong className="tabular-nums">{consecutive}</strong>일
+              </>
+            ) : null}
           </p>
           <MetricHelpDetails>
             <p>
