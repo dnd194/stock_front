@@ -5,6 +5,30 @@ type StockCardProps = {
   stock: Stock
 }
 
+const HANKYUNG_CONSENSUS_LIST =
+  "https://consensus.hankyung.com/analysis/list"
+
+/** Hankyung consensus list URL: KST today as edate, same calendar date one year earlier as sdate. */
+function buildHankyungConsensusSearchUrl(stockName: string): string {
+  const kstMs = Date.now() + 9 * 60 * 60 * 1000
+  const kst = new Date(kstMs)
+  const y = kst.getUTCFullYear()
+  const m = kst.getUTCMonth()
+  const d = kst.getUTCDate()
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  const edate = `${y}-${pad(m + 1)}-${pad(d)}`
+  const start = new Date(Date.UTC(y - 1, m, d))
+  const sdate = `${start.getUTCFullYear()}-${pad(start.getUTCMonth() + 1)}-${pad(start.getUTCDate())}`
+
+  const q = new URLSearchParams({
+    skinType: "stock_good",
+    search_text: stockName,
+    sdate,
+    edate,
+  })
+  return `${HANKYUNG_CONSENSUS_LIST}?${q.toString()}`
+}
+
 function FlameIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -184,7 +208,16 @@ export default function StockCard({ stock }: StockCardProps) {
     <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="font-semibold text-lg">{stock.name}</h2>
+          <h2 className="font-semibold text-lg leading-tight">
+            <a
+              href={buildHankyungConsensusSearchUrl(stock.name)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 max-w-full items-center text-gray-900 underline-offset-2 [-webkit-tap-highlight-color:transparent] touch-manipulation hover:text-cyan-700 hover:underline active:text-cyan-800 sm:min-h-0"
+            >
+              <span className="break-words">{stock.name}</span>
+            </a>
+          </h2>
           <p className="text-sm text-gray-500">
             외국인 {stock.foreignAmount.toLocaleString()} · 기관{" "}
             {stock.institutionAmount.toLocaleString()} · 기금{" "}
